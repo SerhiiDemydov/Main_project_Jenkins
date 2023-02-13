@@ -1,20 +1,31 @@
 pipeline {
-    agent any
+    agent { label 'django' }
 
     stages {
-        stage('Build') {
+        stage('Chekout') {
             steps {
-                echo 'Building..'
+                git branch: 'master',
+                    url: 'https://github.com/SerhiiDemydov/Django_shop.git'
             }
         }
-        stage('Test') {
+        stage('Delete old version docker-compose') {
             steps {
-                echo 'Testing..'
+                sh 'sudo docker-compose -f shop/docker-compose.yml down'
             }
         }
-        stage('Deploy') {
+        stage('Build docker-compose') {
             steps {
-                echo 'Deploying....'
+                sh 'sudo docker-compose -f shop/docker-compose.yml build'
+            }
+        }
+        stage('Up docker-compose') {
+            steps {
+                sh 'sudo docker-compose -f shop/docker-compose.yml up --detach'
+            }
+        }
+        stage('Migration in django') {
+            steps {
+                sh 'sudo docker-compose -f shop/docker-compose.yml exec -T web python manage.py migrate'
             }
         }
     }
