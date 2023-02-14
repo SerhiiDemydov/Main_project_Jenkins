@@ -6,7 +6,7 @@ pipeline {
             steps {
                 sh 'ls -la'
                 sh 'ls -la shop/'
-                sh 'sudo docker-compose -f shop/docker-compose.yml down'
+                sh 'sudo docker-compose -f shop/docker-compose.yml.save down'
             }
         }
         stage('Checkout') {
