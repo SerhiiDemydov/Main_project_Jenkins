@@ -2,15 +2,15 @@ pipeline {
     agent { label 'django' }
 
     stages {
-        stage('Chekout') {
-            steps {
-                git branch: 'master',
-                    url: 'https://github.com/SerhiiDemydov/Django_shop.git'
-            }
-        }
         stage('Delete old version docker-compose') {
             steps {
                 sh 'sudo docker-compose -f shop/docker-compose.yml down'
+            }
+        }
+        stage('Checkout') {
+            steps {
+                git branch: 'master',
+                    url: 'https://github.com/SerhiiDemydov/Django_shop.git'
             }
         }
         stage('Build docker-compose') {
