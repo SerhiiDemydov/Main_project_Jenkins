@@ -4,9 +4,12 @@ pipeline {
     stages {
         stage('Delete old version docker-compose') {
             steps {
-                sh 'ls -la'
-                sh 'ls -la shop/'
-                sh 'sudo docker-compose -f shop/docker-compose.yml.save down'
+                if (sh 'sudo docker-compose -f shop/docker-compose.yml.save down') {
+                    echo "Normal"
+                }
+                elso {
+                    echo "Faild"
+                }
             }
         }
         stage('Checkout') {
