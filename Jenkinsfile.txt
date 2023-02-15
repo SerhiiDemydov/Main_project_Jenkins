@@ -2,16 +2,6 @@ pipeline {
     agent { label 'django' }
 
     stages {
-        stage('Delete old version docker-compose') {
-            steps {
-                if (sh 'sudo docker-compose -f shop/docker-compose.yml.save down') {
-                    echo "Normal"
-                }
-                elso {
-                    echo "Faild"
-                }
-            }
-        }
         stage('Checkout') {
             steps {
                 git branch: 'master',
@@ -30,7 +20,13 @@ pipeline {
         }
         stage('Migration in django') {
             steps {
+                sh 'sudo docker-compose -f shop/docker-compose.yml exec -T web python manage.py makemigrations'
                 sh 'sudo docker-compose -f shop/docker-compose.yml exec -T web python manage.py migrate'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'sudo docker-compose -f shop/docker-compose.yml exec -T web python manage.py test'
             }
         }
     }
